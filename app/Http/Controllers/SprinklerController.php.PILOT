@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
+class SprinklerController extends Controller
+{
+    private $accessKey = 'a5b673e7-81ba-4a6e-b93e-60dbf75d3030';
+    private $apiKey = 'npVoSLdP2r8fxhP6d4LM1zFysbYKyfHQ2fGl91f0YBam0CIco6iqMeyhPhDJ';
+
+    public function sprinklerWyze()
+    {
+        return view('sprinkler');
+    }
+
+    public function toggle(Request $request)
+    {
+        $status = $request->input('status') == 'on' ? 'turn_on' : 'turn_off';
+       
+        try {
+           $response = Http::withHeaders([
+               'Authorization' => "Bearer {$this->accessKey}",
+               'Api-Key' => $this->apiKey,
+               'Content-Type' => 'application/json',
+                 ])->post('https://api.wyzecam.com/app/v2/device/control', [
+               'device_mac' => '7c:78:b2:06:18:b2',
+               'cmd' => $status,
+           ]);
+
+           if ($response->successful()) {
+               // Log the response body
+               \Log::info('Sprinkler API Response:', $response->json());
+               return redirect()->route('sprinkler')->with('status', 'Sprinkler turned ' . ($status == 'turn_on' ? 'on' : 'off') . '.');
+           } else {
+               // Log the error response
+               \Log::error('Failed to toggle sprinkler:', $response->json());
+               return redirect()->route('sprinkler')->with('status', 'Failed to toggle sprinkler');
+           }
+       } catch (RequestException $e) {
+           // Log the exception
+           Log::error('RequestException:', ['message' => $e->getMessage()]);
+           return redirect()->route('sprinkler')->with('status', 'Failed to toggle sprinkler due to an error');
+       }
+   }
+}

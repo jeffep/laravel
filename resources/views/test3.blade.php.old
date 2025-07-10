@@ -1,0 +1,267 @@
+<!-- resources/views/test3.blade.php again!-->
+
+@extends('dashboard')
+    <!-- Include (push) Highcharts library -->
+    @push('head-scripts')
+     <script src="{{ asset('https://code.highcharts.com/highcharts.js') }} "></script>
+    @endpush
+    <!-- push styles -->
+@push('styles')
+    <style>
+        .chart-wrapper {
+            text-align: center;
+            margin: 20px;
+        }
+        .chart-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            display: inline-block;
+            width: 45%; /* Adjust the width as needed */
+            height: 300px; /* Adjust the height as needed */
+            margin: 10px;
+        }
+    </style>
+@endpush
+
+<!-- Content for the page -->
+
+@section('control-content')
+
+    <div class="chart-wrapper">
+    <div class="chart-title">Den Environment</div>
+
+
+    <!-- Container for the temperature chart -->
+    <div class="chart-container" id="temperature-chart1"></div>
+
+    <!-- Container for the humidity chart -->
+    <div class="chart-container" id="humidity-chart1"></div>
+
+
+    <div class="chart-wrapper">
+    <div class="chart-title">Work Room Environment</div>
+
+
+    <!-- Container for the temperature chart -->
+    <div class="chart-container" id="temperature-chart"></div>
+
+    <!-- Container for the humidity chart -->
+    <div class="chart-container" id="humidity-chart"></div>
+
+
+    <div class="chart-wrapper">
+    <div class="chart-title">Garage Environment</div>
+
+
+    <!-- Container for the temperature chart -->
+    <div class="chart-container" id="temperature-chart2"></div>
+
+    <!-- Container for the humidity chart -->
+    <div class="chart-container" id="humidity-chart2"></div>
+
+    <div class="chart-wrapper">
+    <div class="chart-title">Back Porch Environment</div>
+
+
+    <!-- Container for the temperature chart -->
+    <div class="chart-container" id="temperature-chart3"></div>
+
+    <!-- Container for the humidity chart -->
+    <div class="chart-container" id="humidity-chart3"></div>
+
+
+
+    </div>
+@endsection
+
+<!-- Script to do charts -->
+@section('body-inline-scripts')
+    <script>
+            //The controller should have opened the file and skipped to the last
+            //  300 lines, and then pass it to us here.
+      document.addEventListener('DOMContentLoaded', function()
+        {
+
+            // Get the last 300 entries passed from the controller
+           const data1 = @json($linesDen);
+           console.log("Hello!");
+           console.log("linesWorkRoom=", @json($linesDen));
+
+
+           // Function to convert epoch timestamps to readable dates
+            function convertEpochToReadableDates(epochTimes) {
+                return epochTimes.map(epochTime => {
+                    const timestamp = new Date(epochTime * 1000); // Convert to milliseconds
+                    return timestamp.toLocaleString(); // Adjust format as needed
+                });
+            }
+
+            // DEN TEMPERATURES
+
+            // Extract temperature and humidity arrays from the last 300 entries
+            const epochTimes1 = data1.map(entry => entry.Time);
+            const temperatures1 = data1.map(entry => parseFloat(entry.Temperature));
+            const humidities1 = data1.map(entry => parseFloat(entry.Humidity));
+
+            // Convert Epoch time to readable date
+            const formatted_dates1 = convertEpochToReadableDates(epochTimes1);
+
+            // Now you can use formatted_dates, temperatures, and humidities to create your charts
+            console.log('Formatted dates:', formatted_dates1);
+            console.log('Temperatures:', temperatures1);
+            console.log('Humidities:', humidities1);
+
+                    // Create temperature chart
+                    Highcharts.chart('temperature-chart1', {
+                       title: { text: 'Temperature Chart' },
+                       xAxis: {
+                           type: 'datetime', // Specify time-based x-axis
+                           categories: formatted_dates1, // Your array of timestamps
+                       },
+                       series: [{ name: 'Temperature', data: temperatures1 }]
+                    });
+
+                    // Create humidity chart
+                    Highcharts.chart('humidity-chart1', {
+                       title: { text: 'Humidity Chart' },
+                       xAxis: {
+                          type: 'detime', // Specify time-based x-axis
+                          categories: formatted_dates1, // Your array of timestamps
+                       },
+                       series: [{ name: 'Humidity', data: humidities1 }]
+                    });
+
+
+            // WORKROOM TEMPERATURES
+            const data = @json($linesWorkRoom);
+
+            // Extract temperature and humidity arrays from the last 300 entries
+            const epochTimes = data.map(entry => entry.Time);
+            const temperatures = data.map(entry => parseFloat(entry.Temperature));
+            const humidities = data.map(entry => parseFloat(entry.Humidity));
+
+            // Convert Epoch time to readable date
+            const formatted_dates = convertEpochToReadableDates(epochTimes);
+
+            // Now you can use formatted_dates, temperatures, and humidities to create your charts
+            console.log('Formatted dates:', formatted_dates);
+            console.log('Temperatures:', temperatures);
+            console.log('Humidities:', humidities);
+
+                    // Create temperature chart
+                    Highcharts.chart('temperature-chart', {
+                       title: { text: 'Temperature Chart' },
+                       xAxis: {
+                           type: 'datetime', // Specify time-based x-axis
+                           categories: formatted_dates, // Your array of timestamps
+                       },
+                       series: [{ name: 'Temperature', data: temperatures }]
+                    });
+
+                    // Create humidity chart
+                    Highcharts.chart('humidity-chart', {
+                       title: { text: 'Humidity Chart' },
+                       xAxis: {
+                          type: 'datetime', // Specify time-based x-axis
+                          categories: formatted_dates, // Your array of timestamps
+                       },
+                       series: [{ name: 'Humidity', data: humidities }]
+                    });
+
+
+            // GARAGE TEMPERATURES
+
+            const data2 = @json($linesGarage);
+
+            // Extract temperature and humidity arrays from the last 300 entries
+            const epochTimes2 = data2.map(entry => entry.Time);
+            const temperatures2 = data2.map(entry => parseFloat(entry.Temperature));
+            const humidities2 = data2.map(entry => parseFloat(entry.Humidity));
+
+            // Convert Epoch time to readable date
+            const formatted_dates2 = convertEpochToReadableDates(epochTimes2);
+
+            // Now you can use formatted_dates, temperatures, and humidities to create your charts
+            console.log('Formatted dates:', formatted_dates2);
+            console.log('Temperatures:', temperatures2);
+            console.log('Humidities:', humidities2);
+
+                    // Create temperature chart
+                    Highcharts.chart('temperature-chart2', {
+                       title: { text: 'Temperature Chart' },
+                       xAxis: {
+                           type: 'datetime', // Specify time-based x-axis
+                           categories: formatted_dates2, // Your array of timestamps
+                       },
+                       series: [{ name: 'Temperature', data: temperatures2 }]
+                    });
+
+                    // Create humidity chart
+                    Highcharts.chart('humidity-chart2', {
+                       title: { text: 'Humidity Chart' },
+                       xAxis: {
+                          type: 'datetime', // Specify time-based x-axis
+                          categories: formatted_dates2, // Your array of timestamps
+                       },
+                       series: [{ name: 'Humidity', data: humidities2 }]
+                    });
+
+/* 
+            // BACK PORCH TEMPERATURES
+
+             const data3 = json($linesBackPorch);   //should have at sign before json
+
+            // Extract temperature and humidity arrays from the last 300 entries
+            const epochTimes3 = data3.map(entry => entry.Time);
+            const temperatures3 = data3.map(entry => parseFloat(entry.Temperature));
+            const humidities3 = data3.map(entry => parseFloat(entry.Humidity));
+
+            // Convert Epoch time to readable date
+            const formatted_dates3 = convertEpochToReadableDates(epochTimes3);
+
+            // Now you can use formatted_dates, temperatures, and humidities to create your charts
+            console.log('Formatted dates:', formatted_dates3);
+            console.log('Temperatures:', temperatures3);
+            console.log('Humidities:', humidities3);
+
+                    // Create temperature chart
+                    Highcharts.chart('temperature-chart3', {
+                       title: { text: 'Temperature Chart' },
+                       xAxis: {
+                           type: 'datetime', // Specify time-based x-axis
+                           categories: formatted_dates3, // Your array of timestamps
+                       },
+                       series: [{ name: 'Temperature', data: temperatures3 }]
+                    });
+
+                    // Create humidity chart
+                    Highcharts.chart('humidity-chart3', {
+                       title: { text: 'Humidity Chart' },
+                       xAxis: {
+                          type: 'datetime', // Specify time-based x-axis
+                          categories: formatted_dates3, // Your array of timestamps
+                       },
+                       series: [{ name: 'Humidity', data: humidities3 }]
+                    });
+
+*/
+
+
+            // Function to convert Epoch times to readable dates
+            function convertEpochToReadableDates(epochTimes) {
+               const readableDates = [];
+
+               epochTimes.forEach(epochTime => {
+                  const timestamp = new Date(epochTime * 1000); // Convert to milliseconds
+                  const formattedDate = timestamp.toLocaleString(); // Adjust format as needed
+                  readableDates.push(formattedDate);
+                  // Log each formatted date for debugging
+                  console.log(`Epoch ${epochTime}: ${formattedDate}`);
+               });
+              return readableDates;
+            }
+        })
+    </script>
+@endsection

@@ -1,0 +1,23 @@
+/* resources/css/custom-styles.css */
+
+/* Titles */
+.title-color1 {
+    color: #D3D3D3 !important; /* Replace #1 with your desired color */
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+/* Buttons */
+.button-color2 {
+    color: #A9A9A9; /* Replace #2 with your desired color */
+    text-decoration: none;
+    padding: 5px 10px;
+    display: inline-block;
+    margin: 5px 0;
+}
+
+.button-color2:hover {
+    background-color: #f1f1f1; /* Optional: Add a hover effect */
+}
+

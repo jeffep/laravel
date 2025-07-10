@@ -1,0 +1,14 @@
+@extends('dashboard')
+
+@section('control-content')
+<div class="container">
+        <h1>Trugreen Directory</h1>
+        <ul>
+            @foreach ($directories as $directory)
+                <li>
+                    <a href="{{ url('/trugreen/' . basename($directory)) }}">{{ basename($directory) }}</a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@section
