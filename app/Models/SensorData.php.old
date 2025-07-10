@@ -9,15 +9,9 @@ class SensorData extends Model
     protected $table = 'sensor_data';
 
     protected $fillable = [
-        'sensor_id',
+        'location',
         'time',
-        'title',
-        'value',
+        'temperature',
+        'humidity',
     ];
-
-    // Relationships
-    public function sensor()
-    {
-        return $this->belongsTo(Sensor::class);
-    }
 }

@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\AutomationRule;
-use App\Models\Sensor;
 use App\Models\SensorData;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
@@ -31,25 +30,17 @@ class MonitorTemperature extends Command
         foreach ($rules as $rule) {
             Log::channel('temperature_monitor')->info("Processing rule ID {$rule->id} for location {$rule->location}");
 
-            // Find the sensor for this location
-            $sensor = Sensor::where('location', $rule->location)->first();
-            if (!$sensor) {
-                Log::channel('temperature_monitor')->warning("No sensor found for location {$rule->location}");
-                continue;
-            }
-
-            // Get the latest temperature for the sensor
-            $latest = SensorData::where('sensor_id', $sensor->id)
-                ->where('title', 'temperature')
+            // Get the latest temperature for the location
+            $latest = SensorData::where('location', $rule->location)
                 ->orderBy('time', 'desc')
                 ->first();
 
             if (!$latest) {
-                Log::channel('temperature_monitor')->warning("No temperature data for sensor/location {$rule->location} (sensor_id={$sensor->id})");
+                Log::channel('temperature_monitor')->warning("No temperature data for location {$rule->location}");
                 continue;
             }
 
-            Log::channel('temperature_monitor')->info("Latest temperature for {$rule->location}: {$latest->value} at {$latest->time}");
+            Log::channel('temperature_monitor')->info("Latest temperature for {$rule->location}: {$latest->temperature} at {$latest->time}");
 
             // Parse condition (e.g., ">84")
             preg_match('/([><=]+)(\d+\.?\d*)/', $rule->condition_compare, $matches);
@@ -60,7 +51,7 @@ class MonitorTemperature extends Command
 
             $operator = $matches[1];
             $threshold = (float) $matches[2];
-            $temperature = $latest->value;
+            $temperature = $latest->temperature;
 
             Log::channel('temperature_monitor')->info("Evaluating condition: {$temperature} {$operator} {$threshold}");
 
