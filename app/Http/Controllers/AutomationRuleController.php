@@ -18,7 +18,7 @@ class AutomationRuleController extends Controller
     public function create()
     {
         $devices = Device::all();
-        $locations = DB::table('sensor_data')->select('location')->distinct()->pluck('location');
+        $locations = DB::table('sensor')->select('location')->distinct()->pluck('location');
         return view('automation_rules.create', compact('devices', 'locations'));
     }
 
@@ -40,7 +40,7 @@ class AutomationRuleController extends Controller
     public function edit(AutomationRule $automationRule)
     {
         $devices = Device::all();
-        $locations = DB::table('sensor_data')->select('location')->distinct()->pluck('location');
+        $locations = DB::table('sensor')->select('location')->distinct()->pluck('location');
         return view('automation_rules.edit', compact('automationRule', 'devices', 'locations'));
     }
 
