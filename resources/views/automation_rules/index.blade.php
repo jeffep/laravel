@@ -1,6 +1,24 @@
 @extends('dashboard')
 
 @section('control-content')
+<style>
+.table {
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    vertical-align: middle;
+}
+
+.alert-success {
+    margin-bottom: 20px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+}
+</style>
 <h1>Automation Rules</h1>
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
