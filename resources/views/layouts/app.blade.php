@@ -168,7 +168,7 @@
     <!-- Automation Section -->
     <li class="title title-color1">Automation</li>
     <li><a href="{{ route('devices.index') }}" class="button-color2">T. Sensor Setup</a></li>
-    <li><a href="{{ route('automation.index') }}" class="button-color2">Automate</a></li>
+    <li><a href="{{ route('automation_rules.index') }}" class="button-color2">Automate</a></li>
 
 
     <li class="title title-color1">Farm</li>
