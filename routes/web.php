@@ -99,10 +99,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/schwab-code', [SchwabController::class, 'handleCode'])->name('schwab.code.handle');
     Route::get('/corn-prices', [SchwabController::class, 'showCornPrices'])->name('corn.prices');
 
-    // Resources
+    // Devices and Automations
     Route::resource('devices', DeviceController::class);
-    Route::resource('automation_rules', AutomationRuleController::class);
-    Route::post('/automation/toggle-active', [AutomationController::class, 'toggleActive'])->name('automation.toggle-active');
+
+       // Resource routes for automation_rules (handled by AutomationRuleController)
+       Route::resource('automation_rules', AutomationRuleController::class);
+
+       // Custom route for toggling active status (handled by AutomationRuleController for consistency)
+       Route::post('/automation_rules/toggle-active', [AutomationRuleController::class, 'toggleActive'])->name('automation.toggle-active');
+
+       // Custom route for Shelly-specific automation actions (handled by AutomationController)
+       Route::post('/automation/store', [AutomationController::class, 'store'])->name('automation.store');
+
 
     // Temperatures Setup
     Route::get('/temperatures_setup', [TemperaturesSetupController::class, 'temperatures_setup'])->name('temperatures_setup');
