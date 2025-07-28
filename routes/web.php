@@ -19,6 +19,7 @@ use App\Http\Controllers\TouchController;
 use App\Http\Controllers\TrugreenController;
 use App\Http\Controllers\WattageChartController;
 use App\Http\Controllers\WebcamController;
+use App\Http\Controllers\AutomationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,6 +102,7 @@ Route::middleware('auth')->group(function () {
     // Resources
     Route::resource('devices', DeviceController::class);
     Route::resource('automation_rules', AutomationRuleController::class);
+    Route::post('/automation/toggle-active', [AutomationController::class, 'toggleActive'])->name('automation.toggle-active');
 
     // Temperatures Setup
     Route::get('/temperatures_setup', [TemperaturesSetupController::class, 'temperatures_setup'])->name('temperatures_setup');
