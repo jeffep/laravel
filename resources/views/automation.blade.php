@@ -1,47 +1,6 @@
 @extends('dashboard')
 
 @section('control-content')
-        <!-- Inline CSS -->
-        <style>
-            .table-responsive .custom-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 1rem;
-                font-size: 0.9rem;
-            }
-
-            .table-responsive .custom-table th,
-            .table-responsive .custom-table td {
-                border: 1px solid #dee2e6; /* Light gray border */
-                padding: 0.75rem; /* Comfortable padding */
-                text-align: left;
-                vertical-align: middle; /* Center content vertically */
-            }
-
-            .custom-table th {
-                background-color: #f8f9fa; /* Light gray header background */
-                font-weight: bold;
-            }
-
-            .custom-table tbody tr:hover {
-                background-color: #f1f1f1; /* Hover effect */
-            }
-
-            .custom-table .text-center {
-                text-align: center;
-            }
-
-            /* Checkbox styling */
-            .custom-table input[type="checkbox"] {
-                width: 1.2rem;
-                height: 1.2rem;
-                cursor: pointer;
-            }
-
-            .custom-table input[type="checkbox"]:hover {
-                box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-            }
-        </style>
     <div class="container">
         <h1>Shelly Status</h1>
 
@@ -53,10 +12,51 @@
 
         <h1>Automation Settings</h1>
 
+        <!-- Inline CSS -->
+        <style>
+            .automation-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .automation-table th,
+            .automation-table td {
+                border: 1px solid #dee2e6; /* Light gray border */
+                padding: 0.75rem; /* Comfortable padding */
+                text-align: left;
+                vertical-align: middle; /* Center content vertically */
+            }
+
+            .automation-table th {
+                background-color: #f8f9fa; /* Light gray header background */
+                font-weight: bold;
+            }
+
+            .automation-table tbody tr:hover {
+                background-color: #f1f1f1; /* Hover effect */
+            }
+
+            .automation-table .text-center {
+                text-align: center;
+            }
+
+            /* Checkbox styling */
+            .automation-table input[type="checkbox"] {
+                width: 1.2rem;
+                height: 1.2rem;
+                cursor: pointer;
+            }
+
+            .automation-table input[type="checkbox"]:hover {
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            }
+        </style>
 
         <!-- Display existing settings -->
         <div class="table-responsive">
-            <table class="custom-table">
+            <table class="automation-table">
                 <thead>
                     <tr>
                         <th>Active</th>
@@ -73,10 +73,10 @@
                     @forelse ($automationSettings as $setting)
                         <tr>
                             <td>
-                                <input type="checkbox" 
-                                       class="active-toggle" 
-                                       data-id="{{ $setting->id }}" 
-                                       {{ $setting->active ? 'checked' : '' }} 
+                                <input type="checkbox"
+                                       class="active-toggle"
+                                       data-id="{{ $setting->id }}"
+                                       {{ $setting->active ? 'checked' : '' }}
                                        title="Toggle active status">
                             </td>
                             <td>{{ $setting->location ?? 'N/A' }}</td>
