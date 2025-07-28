@@ -3,15 +3,15 @@
 @section('control-content')
         <!-- Inline CSS -->
         <style>
-            .custom-table {
+            .table-responsive .custom-table {
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 1rem;
                 font-size: 0.9rem;
             }
 
-            .custom-table th,
-            .custom-table td {
+            .table-responsive .custom-table th,
+            .table-responsive .custom-table td {
                 border: 1px solid #dee2e6; /* Light gray border */
                 padding: 0.75rem; /* Comfortable padding */
                 text-align: left;
