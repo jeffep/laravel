@@ -5,7 +5,9 @@
         </h2>
     </x-slot>
     <div>
-            {{ __("You're logged in!!") }}
-            @yield('control-content')
+        @if (session('status'))
+            <p class="success-message">{{ session('status') }}</p>
+        @endif
+        @yield('control-content')
     </div>
 </x-app-layout>

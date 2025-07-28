@@ -27,20 +27,23 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
+        // Set flash message for initial login
+        $request->session()->flash('status', "You're logged in!!");
+
         // Define role-based redirection
         $user = auth()->user();
         $redirectRoutes = [
-            'admin'      => 'admin.dashboard',
+            'admin'           => 'admin.dashboard',
             'garagetouchpanel' => 'touch.switches',
             'fronttouchpanel' => 'touch.switches',
-            'limited'    => 'limited.dashboard',
-            'default'    => 'dashboard', // Fallback for normal users
+            'limited'         => 'limited.dashboard',
+            'default'         => 'dashboard', // Fallback for normal users
         ];
 
-    $route = $redirectRoutes[$user->role] ?? 'dashboard'; // Default to 'dashboard' if role is unknown
+        $route = $redirectRoutes[$user->role] ?? 'dashboard'; // Default to 'dashboard' if role is unknown
 
-    return redirect()->intended(route($route, absolute: false));
-}
+        return redirect()->intended(route($route, absolute: false));
+    }
 
     /**
      * Destroy an authenticated session.
