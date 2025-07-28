@@ -62,8 +62,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/temperatures', [ControlPageController::class, 'temperatures'])->name('temperatures');
     Route::get('/sounds', [ControlPageController::class, 'sounds'])->name('sounds');
     Route::get('/sprinkler2', [ControlPageController::class, 'sprinkler2'])->name('sprinkler2');
-    Route::get('/automation', [ControlPageController::class, 'automation'])->name('automation');
-    Route::post('/automation_store', [ControlPageController::class, 'automation_store'])->name('automation_store');
+//    Route::get('/automation', [ControlPageController::class, 'automation'])->name('automation');
+//    Route::post('/automation_store', [ControlPageController::class, 'automation_store'])->name('automation_store');
 
     // Shelly Devices
     Route::get('/shelly_status', [ShellyController::class, 'shelly_status'])->name('shelly_status');
