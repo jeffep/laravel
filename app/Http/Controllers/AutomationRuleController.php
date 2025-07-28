@@ -30,9 +30,10 @@ class AutomationRuleController extends Controller
             'condition_compare' => 'required|string|max:255',
             'action_device_id' => 'required|exists:devices,id',
             'action' => 'required|in:turn_on,turn_off',
+            'active' => 'boolean', // Add validation for active
         ]);
 
-        AutomationRule::create($validated);
+        AutomationRule::create($validated + ['active' => $request->has('active')]);
 
         return redirect()->route('automation_rules.index')->with('success', 'Rule added successfully.');
     }
@@ -52,9 +53,10 @@ class AutomationRuleController extends Controller
             'condition_compare' => 'required|string|max:255',
             'action_device_id' => 'required|exists:devices,id',
             'action' => 'required|in:turn_on,turn_off',
+            'active' => 'boolean',
         ]);
 
-        $automationRule->update($validated);
+        $automationRule->update($validated + ['active' => $request->has('active')]);
 
         return redirect()->route('automation_rules.index')->with('success', 'Rule updated successfully.');
     }

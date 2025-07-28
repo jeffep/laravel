@@ -19,13 +19,15 @@ class MonitorTemperature extends Command
         Log::channel('temperature_monitor')->info('MonitorTemperature command started at ' . now());
 
         $rules = AutomationRule::where('condition_type', 'temperature')
+            ->where('active', true) // Add active filter
             ->with('actionDevice')
             ->get();
 
-        Log::channel('temperature_monitor')->info("Found {$rules->count()} temperature rules");
+        Log::channel('temperature_monitor')->info("Found {$rules->count()} active temperature rules");
 
         if ($rules->isEmpty()) {
-            Log::channel('temperature_monitor')->warning('No temperature rules found');
+            Log::channel('temperature_monitor')->warning('No active temperature rules found');
+            return;
         }
 
         foreach ($rules as $rule) {

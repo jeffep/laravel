@@ -1,7 +1,6 @@
 @extends('dashboard')
 
 @section('control-content')
-
     <h1>Add Automation Rule</h1>
     @if ($errors->any())
         <ul class="alert alert-danger">
@@ -45,6 +44,12 @@
                 <option value="turn_on">Turn On</option>
                 <option value="turn_off">Turn Off</option>
             </select>
+        </div>
+        <div class="mb-3">
+            <div class="form-check">
+                <input type="checkbox" name="active" class="form-check-input" id="active" checked>
+                <label class="form-check-label" for="active">Active</label>
+            </div>
         </div>
         <button type="submit" class="btn btn-primary">Save Rule</button>
     </form>

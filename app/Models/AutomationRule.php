@@ -12,6 +12,7 @@ class AutomationRule extends Model
         'condition_compare',
         'action_device_id',
         'action',
+        'active' // Add active to fillable
     ];
 
     public function actionDevice()
