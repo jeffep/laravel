@@ -1,17 +1,6 @@
 @extends('dashboard')
 
 @section('control-content')
-    <div class="container">
-        <h1>Shelly Status</h1>
-
-        @if(isset($error))
-            <div class="alert alert-danger">
-                {{ $error }}
-            </div>
-        @endif
-
-        <h1>Automation Settings</h1>
-
         <!-- Inline CSS -->
         <style>
             .custom-table {
@@ -53,6 +42,17 @@
                 box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             }
         </style>
+    <div class="container">
+        <h1>Shelly Status</h1>
+
+        @if(isset($error))
+            <div class="alert alert-danger">
+                {{ $error }}
+            </div>
+        @endif
+
+        <h1>Automation Settings</h1>
+
 
         <!-- Display existing settings -->
         <div class="table-responsive">
