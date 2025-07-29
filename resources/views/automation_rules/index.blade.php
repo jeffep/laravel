@@ -62,10 +62,22 @@
             .btn-primary, .btn-danger {
                 margin-right: 10px;
             }
+
+        .btn-prominent {
+            border: 2px solid #0052cc !important; /* Add a distinct border */
+            font-weight: bold; /* Make text bolder */
+            padding: 10px 20px; /* Increase padding for larger size */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+            transition: all 0.2s ease; /* Smooth hover effect */
+        }
+        .btn-prominent:hover {
+            background-color: #0041a3 !important; /* Darker blue on hover */
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
         </style>
 
         <!-- Add New Rule Button -->
-        <a href="{{ route('automation_rules.create') }}" class="btn btn-primary mb-3">Add New Rule</a>
+        <a href="{{ route('automation_rules.create') }}" class="btn btn-primary btn-prominent">Add A New Rule</a>
 
         <!-- Display existing rules -->
         <div class="table-responsive">
