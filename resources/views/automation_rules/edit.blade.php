@@ -1,58 +1,144 @@
 @extends('dashboard')
 
 @section('control-content')
-    <h1>Edit Automation Rule</h1>
-    @if ($errors->any())
-        <ul class="alert alert-danger">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
-    <form action="{{ route('automation_rules.update', $automationRule) }}" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="mb-3">
-            <label class="form-label">Monitor Location:</label>
-            <select name="location" class="form-control" id="location" required>
-                @foreach ($locations as $location)
-                    <option value="{{ $location }}" {{ $automationRule->location == $location ? 'selected' : '' }}>{{ $location }}</option>
+    <div class="edit-rule-container">
+        <h1>Edit Automation Rule</h1>
+        @if ($errors->any())
+            <ul class="error-messages">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
                 @endforeach
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Condition Type:</label>
-            <select name="condition_type" class="form-control" id="condition_type" required>
-                <option value="temperature" {{ $automationRule->condition_type == 'temperature' ? 'selected' : '' }}>Temperature</option>
-                <option value="device_status" {{ $automationRule->condition_type == 'device_status' ? 'selected' : '' }}>Device Status</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Condition (e.g., ">84" or "Off"):</label>
-            <input type="text" name="condition_compare" class="form-control" value="{{ old('condition_compare', $automationRule->condition_compare) }}" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Action Device:</label>
-            <select name="action_device_id" class="form-control" required>
-                @foreach ($devices as $device)
-                    <option value="{{ $device->id }}" {{ $automationRule->action_device_id == $device->id ? 'selected' : '' }}>{{ $device->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Action:</label>
-            <select name="action" class="form-control" required>
-                <option value="turn_on" {{ $automationRule->action == 'turn_on' ? 'selected' : '' }}>Turn On</option>
-                <option value="turn_off" {{ $automationRule->action == 'turn_off' ? 'selected' : '' }}>Turn Off</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <div class="form-check">
-                <input type="checkbox" name="active" class="form-check-input" id="active" {{ $automationRule->active ? 'checked' : '' }}>
-                <label class="form-check-label" for="active">Active</label>
+            </ul>
+        @endif
+        <form action="{{ route('automation_rules.update', $automationRule) }}" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="form-group">
+                <label for="location">Monitor Location:</label>
+                <select name="location" id="location" required>
+                    @foreach ($locations as $location)
+                        <option value="{{ $location }}" {{ $automationRule->location == $location ? 'selected' : '' }}>{{ $location }}</option>
+                    @endforeach
+                </select>
             </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Update Rule</button>
-    </form>
-    <a href="{{ route('automation_rules.index') }}" class="btn btn-secondary mt-2">Back to Rules</a>
+            <div class="form-group">
+                <label for="condition_type">Condition Type:</label>
+                <select name="condition_type" id="condition_type" required>
+                    <option value="temperature" {{ $automationRule->condition_type == 'temperature' ? 'selected' : '' }}>Temperature</option>
+                    <option value="device_status" {{ $automationRule->condition_type == 'device_status' ? 'selected' : '' }}>Device Status</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="condition_compare">Condition (e.g., ">84" or "Off"):</label>
+                <input type="text" name="condition_compare" value="{{ old('condition_compare', $automationRule->condition_compare) }}" required>
+            </div>
+            <div class="form-group">
+                <label for="action_device_id">Action Device:</label>
+                <select name="action_device_id" required>
+                    @foreach ($devices as $device)
+                        <option value="{{ $device->id }}" {{ $automationRule->action_device_id == $device->id ? 'selected' : '' }}>{{ $device->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="action">Action:</label>
+                <select name="action" required>
+                    <option value="turn_on" {{ $automationRule->action == 'turn_on' ? 'selected' : '' }}>Turn On</option>
+                    <option value="turn_off" {{ $automationRule->action == 'turn_off' ? 'selected' : '' }}>Turn Off</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="hidden" name="active" value="0">
+                    <input type="checkbox" name="active" id="active" value="1" {{ old('active', $automationRule->active) ? 'checked' : '' }}>
+                    <label for="active">Active</label>
+                </div>
+            </div>
+            <button type="submit" class="update-rule-btn">Update Rule</button>
+        </form>
+        <a href="{{ route('automation_rules.index') }}" class="back-btn">Back to Rules</a>
+    </div>
+
+    <style>
+        .edit-rule-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .error-messages {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            list-style: none;
+        }
+        .error-messages li {
+            margin-bottom: 5px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .form-group select,
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .checkbox-group label {
+            font-weight: normal;
+        }
+        .update-rule-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border: 2px solid #0052cc;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .update-rule-btn:hover {
+            background-color: #0052cc;
+            transform: scale(1.05);
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid #5a6268;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
 @endsection

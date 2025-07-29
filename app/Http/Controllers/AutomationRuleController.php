@@ -47,14 +47,13 @@ class AutomationRuleController extends Controller
             'condition_compare' => 'required|string|max:255',
             'action_device_id' => 'required|exists:devices,id',
             'action' => 'required|in:turn_on,turn_off',
-            'active' => 'required|boolean',
+            'active' => 'required|boolean', // Ensure active is required and boolean
         ]);
-    
-        $automationRule->update($validated);
+
+        $automationRule->update($validated); // Use validated data directly
 
         return redirect()->route('automation_rules.index')->with('success', 'Rule updated successfully.');
     }
-
 
     public function edit(AutomationRule $automationRule)
     {

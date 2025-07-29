@@ -15,6 +15,10 @@ class AutomationRule extends Model
         'active' // Add active to fillable
     ];
 
+    protected $casts = [
+        'active' => 'boolean', // Ensures tinyint is treated as boolean
+    ];
+
     public function actionDevice()
     {
         return $this->belongsTo(Device::class, 'action_device_id');
