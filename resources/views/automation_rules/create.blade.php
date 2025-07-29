@@ -47,11 +47,26 @@
         </div>
         <div class="mb-3">
             <div class="form-check">
-                <input type="checkbox" name="active" class="form-check-input" id="active" checked>
+                <input type="hidden" name="active" value="0">
+                <input type="checkbox" name="active" class="form-check-input" id="active" value="1" {{ old('active', 1) ? 'checked' : '' }}>
                 <label class="form-check-label" for="active">Active</label>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Save Rule</button>
+        <button type="submit" class="btn btn-primary btn-prominent">Save Rule</button>
     </form>
     <a href="{{ route('automation_rules.index') }}" class="btn btn-secondary mt-2">Back to Rules</a>
+
+    <style>
+        .btn-prominent {
+            border: 2px solid #0052cc !important; /* Add a distinct border */
+            font-weight: bold; /* Make text bolder */
+            padding: 10px 20px; /* Increase padding for larger size */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+            transition: all 0.2s ease; /* Smooth hover effect */
+        }
+        .btn-prominent:hover {
+            background-color: #0041a3 !important; /* Darker blue on hover */
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+    </style>
 @endsection

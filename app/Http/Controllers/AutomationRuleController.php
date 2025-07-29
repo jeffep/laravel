@@ -22,6 +22,7 @@ class AutomationRuleController extends Controller
         return view('automation_rules.create', compact('devices', 'locations'));
     }
 
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -30,19 +31,12 @@ class AutomationRuleController extends Controller
             'condition_compare' => 'required|string|max:255',
             'action_device_id' => 'required|exists:devices,id',
             'action' => 'required|in:turn_on,turn_off',
-            'active' => 'boolean', // Add validation for active
+            'active' => 'required|boolean', // Ensure active is required and boolean
         ]);
 
-        AutomationRule::create($validated + ['active' => $request->has('active')]);
+        AutomationRule::create($validated); // Use validated data directly
 
         return redirect()->route('automation_rules.index')->with('success', 'Rule added successfully.');
-    }
-
-    public function edit(AutomationRule $automationRule)
-    {
-        $devices = Device::all();
-        $locations = DB::table('sensors')->select('location')->distinct()->pluck('location');
-        return view('automation_rules.edit', compact('automationRule', 'devices', 'locations'));
     }
 
     public function update(Request $request, AutomationRule $automationRule)
@@ -53,12 +47,20 @@ class AutomationRuleController extends Controller
             'condition_compare' => 'required|string|max:255',
             'action_device_id' => 'required|exists:devices,id',
             'action' => 'required|in:turn_on,turn_off',
-            'active' => 'boolean',
+            'active' => 'required|boolean',
         ]);
-
-        $automationRule->update($validated + ['active' => $request->has('active')]);
+    
+        $automationRule->update($validated);
 
         return redirect()->route('automation_rules.index')->with('success', 'Rule updated successfully.');
+    }
+
+
+    public function edit(AutomationRule $automationRule)
+    {
+        $devices = Device::all();
+        $locations = DB::table('sensors')->select('location')->distinct()->pluck('location');
+        return view('automation_rules.edit', compact('automationRule', 'devices', 'locations'));
     }
 
     public function destroy(AutomationRule $automationRule)
