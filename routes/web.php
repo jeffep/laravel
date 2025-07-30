@@ -100,15 +100,17 @@ Route::middleware('auth')->group(function () {
     // Devices and Automations
     Route::resource('devices', DeviceController::class);
 
-       // Resource routes for automation_rules (handled by AutomationRuleController)
-       Route::resource('automation_rules', AutomationRuleController::class);
+    // Resource routes for automation_rules (handled by AutomationRuleController)
+    Route::resource('automation_rules', AutomationRuleController::class);
 
-       // Custom route for toggling active status (handled by AutomationRuleController for consistency)
-       Route::post('/automation_rules/toggle-active', [AutomationRuleController::class, 'toggleActive'])->name('automation.toggle-active');
+    // Custom route for toggling active status (handled by AutomationRuleController for consistency)
+    Route::post('/automation_rules/toggle-active', [AutomationRuleController::class, 'toggleActive'])->name('automation.toggle-active');
 
-       // Custom route for Shelly-specific automation actions (handled by AutomationController)
-       Route::post('/automation/store', [AutomationController::class, 'store'])->name('automation.store');
+    // Custom route for toggling verbose mode (handled by AutomationRuleController)
+    Route::post('/automation_rules/toggle-verbose', [AutomationRuleController::class, 'toggleVerbose'])->name('automation_rules.toggleVerbose');
 
+    // Custom route for Shelly-specific automation actions (handled by AutomationController)
+    Route::post('/automation/store', [AutomationController::class, 'store'])->name('automation.store');
 
     // Temperatures Setup
     Route::get('/temperatures_setup', [TemperaturesSetupController::class, 'temperatures_setup'])->name('temperatures_setup');

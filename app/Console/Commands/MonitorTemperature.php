@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\AutomationRule;
 use App\Models\Sensor;
 use App\Models\SensorData;
+use App\Models\Setting;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -18,45 +19,43 @@ class MonitorTemperature extends Command
     {
         Log::channel('temperature_monitor')->info('MonitorTemperature command started at ' . now());
 
+        $verbose = Setting::where('key', 'temperature_monitor_verbose')->first()->value ?? '0';
+
         $rules = AutomationRule::where('condition_type', 'temperature')
-            ->where('active', true) // Add active filter
+            ->where('active', true)
             ->with('actionDevice')
             ->get();
-
-        Log::channel('temperature_monitor')->info("Found {$rules->count()} active temperature rules");
 
         if ($rules->isEmpty()) {
             Log::channel('temperature_monitor')->warning('No active temperature rules found');
             return;
         }
 
-        foreach ($rules as $rule) {
-            Log::channel('temperature_monitor')->info("Processing rule ID {$rule->id} for location {$rule->location}");
+        $summary = ['processed' => 0, 'actions' => [], 'errors' => []];
 
-            // Find the sensor for this location
+        foreach ($rules as $rule) {
+            $summary['processed']++;
+
             $sensor = Sensor::where('location', $rule->location)->first();
             if (!$sensor) {
-                Log::channel('temperature_monitor')->warning("No sensor found for location {$rule->location}");
+                $summary['errors'][] = "No sensor found for location {$rule->location}";
                 continue;
             }
 
-            // Get the latest temperature for the sensor
             $latest = SensorData::where('sensor_id', $sensor->id)
                 ->where('title', 'temperature')
                 ->orderBy('time', 'desc')
                 ->first();
 
             if (!$latest) {
-                Log::channel('temperature_monitor')->warning("No temperature data for sensor/location {$rule->location} (sensor_id={$sensor->id})");
+                $summary['errors'][] = "No temperature data for location {$rule->location} (sensor_id={$sensor->id})";
                 continue;
             }
-
-            Log::channel('temperature_monitor')->info("Latest temperature for {$rule->location}: {$latest->value} at {$latest->time}");
 
             // Parse condition (e.g., ">84")
             preg_match('/([><=]+)(\d+\.?\d*)/', $rule->condition_compare, $matches);
             if (count($matches) < 3) {
-                Log::channel('temperature_monitor')->error("Invalid condition format for rule ID {$rule->id}: {$rule->condition_compare}");
+                $summary['errors'][] = "Invalid condition format for rule ID {$rule->id}: {$rule->condition_compare}";
                 continue;
             }
 
@@ -64,7 +63,10 @@ class MonitorTemperature extends Command
             $threshold = (float) $matches[2];
             $temperature = $latest->value;
 
-            Log::channel('temperature_monitor')->info("Evaluating condition: {$temperature} {$operator} {$threshold}");
+            // Log detailed condition evaluation only in verbose mode
+            if ($verbose) {
+                Log::channel('temperature_monitor')->debug("Evaluating rule ID {$rule->id}: {$temperature} {$operator} {$threshold} at {$rule->location}");
+            }
 
             $shouldAct = false;
             if ($operator == '>' && $temperature > $threshold) {
@@ -75,21 +77,24 @@ class MonitorTemperature extends Command
                 $shouldAct = true;
             }
 
-            Log::channel('temperature_monitor')->info("Rule ID {$rule->id} shouldAct: " . ($shouldAct ? 'true' : 'false'));
-
             if ($shouldAct) {
-                Log::channel('temperature_monitor')->info("Attempting {$rule->action} on {$rule->actionDevice->name} (Temp: {$temperature} at {$rule->location})");
-
-                // Execute the action
                 $url = $rule->action == 'turn_on' ? $rule->actionDevice->action_on : $rule->actionDevice->action_off;
                 try {
-                    Log::channel('temperature_monitor')->info("Sending HTTP request to URL: {$url}");
                     Http::get($url);
-                    Log::channel('temperature_monitor')->info("Successfully executed {$rule->action} on {$rule->actionDevice->name} (Temp: {$temperature} at {$rule->location})");
+                    $summary['actions'][] = "Executed {$rule->action} on {$rule->actionDevice->name} (Temp: {$temperature} at {$rule->location})";
                 } catch (\Exception $e) {
-                    Log::channel('temperature_monitor')->error("Failed to execute {$rule->action} on {$rule->actionDevice->name}: {$e->getMessage()}");
+                    $summary['errors'][] = "Failed to execute {$rule->action} on {$rule->actionDevice->name}: {$e->getMessage()}";
                 }
             }
+        }
+
+        // Log summary
+        Log::channel('temperature_monitor')->info("Processed {$summary['processed']} rules. Actions taken: " . count($summary['actions']));
+        if (!empty($summary['actions']) && $verbose) {
+            Log::channel('temperature_monitor')->info('Actions: ' . implode('; ', $summary['actions']));
+        }
+        if (!empty($summary['errors'])) {
+            Log::channel('temperature_monitor')->warning('Errors: ' . implode('; ', $summary['errors']));
         }
 
         Log::channel('temperature_monitor')->info('MonitorTemperature command completed at ' . now());

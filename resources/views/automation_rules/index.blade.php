@@ -8,6 +8,16 @@
         <div class="button-container">
             <a href="{{ route('automation_rules.create') }}" class="add-rule-btn">Add A New Rule</a>
         </div>
+        <div class="verbose-mode-container">
+            <form action="{{ route('automation_rules.toggleVerbose') }}" method="POST">
+                @csrf
+                <label for="verbose_mode">
+                    <input type="checkbox" id="verbose_mode" name="verbose_mode" value="1" {{ $verboseMode ? 'checked' : '' }}>
+                    Enable Verbose Logging for Temperature Monitor
+                </label>
+                <button type="submit" class="verbose-btn">Save</button>
+            </form>
+        </div>
         @if (session('success'))
             <div class="success-message">
                 {{ session('success') }}
@@ -83,6 +93,25 @@
         .add-rule-btn:hover {
             background-color: #0052cc;
             transform: scale(1.05);
+        }
+        .verbose-mode-container {
+            margin-bottom: 20px;
+        }
+        .verbose-mode-container label {
+            font-size: 1rem;
+            color: #333;
+            margin-right: 10px;
+        }
+        .verbose-btn {
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: 1px solid #218838;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .verbose-btn:hover {
+            background-color: #218838;
         }
         .success-message {
             background-color: #d4edda;
