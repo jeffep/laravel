@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddActiveToAutomationRules extends Migration
+class AddActiveToAutomationRules20250728 extends Migration
 {
     public function up()
     {

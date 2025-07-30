@@ -15,77 +15,97 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            const data = await response.json();
-            console.log(`Fetched Data for ${location}:`, data);
-            return data;
+            const result = await response.json();
+            console.log(`Fetched Data for ${location}:`, result);
+            return result;
         } catch (error) {
             console.error(`Error fetching data for ${location}:`, error);
-            return [];
+            return { data: [], titles: [] };
         }
     }
+
+    // Function to create chart container if it doesn't exist
+    function ensureChartContainer(location, title) {
+        const containerId = `${location}-${title.toLowerCase().replace(/[^a-z0-9]/g, '_')}-chart`;
+        let container = document.getElementById(containerId);
+        if (!container) {
+            container = document.createElement('div');
+            container.id = containerId;
+            container.className = 'chart-container';
+            document.getElementById(`${location}-charts`).appendChild(container);
+        }
+        return containerId;
+    }
+
     // Function to create or update a Highcharts chart
     function createOrUpdateChart(container, title, seriesData, seriesName) {
         console.log(`Creating/Updating chart for container: ${container}`);
         console.log(`Series Data for ${seriesName}:`, seriesData);
         if (!seriesData || seriesData.length === 0) {
-            console.warn(`No data to plot for ${container}`);
+            console.warn(`No data to plot for ${containerId}`);
+            container.innerHTML = `<p style="text-align: center; color: #666;">No data available for ${seriesName}</p>`;
             return;
         }
-        if (Highcharts.charts[container]) {
-            const chart = Highcharts.charts[container];
-            chart.update({
-                title: { text: title },
-                series: [{ name: seriesName, data: seriesData }]
-            });
-        } else {
-            Highcharts.chart(container, {
-                time: {
-                    timezone: 'America/Denver'
-                },
-                title: { text: title },
-                xAxis: {
-                    type: 'datetime',
-                    title: { text: 'Time' }
-                },
-                yAxis: {
-                    title: { text: seriesName }
-                },
-                series: [{ name: seriesName, data: seriesData }]
-            });
+
+        // Define unit based on title
+        const units = {
+            'Temperature': '°F',
+            'Humidity': '%',
+            'FanSpeed': 'RPM'
+        };
+        const unit = units[title] || '';
+
+        const chartConfig = {
+            time: {
+                timezone: 'America/Denver'
+            },
+            title: { text: title },
+            xAxis: {
+                type: 'datetime',
+                title: { text: 'Time' }
+            },
+            yAxis: {
+                title: { text: `${seriesName} (${unit})` }
+            },
+            series: [{ name: seriesName, data: seriesData }]
+        };
+
+        const chart = Highcharts.charts[container] || Highcharts.chart(container, chartConfig);
+        if (chart.series && chart.series.length > 0) {
+            chart.series[0].setData(seriesData);
+            chart.setTitle({ text: title });
         }
     }
+
     // Function to update charts for a location
     async function updateCharts(location, hours, interval) {
         console.log('updateCharts called with:', { location, hours, interval });
-        const data = await fetchData(location, hours, interval);
-        if (!data || data.length === 0) {
-            console.warn(`No data returned for ${location}`);
+        const result = await fetchData(location, hours, interval);
+        const data = result.data || [];
+        const titles = result.titles || [];
+
+        if (!data || data.length === 0 || !titles || titles.length === 0) {
+            console.warn(`No data or titles returned for ${location}`);
             return;
         }
-        // Parse datetime string directly
-        const temperatureData = data.map(entry => [
-            moment.tz(entry.time, 'America/Denver').valueOf(),
-            parseFloat(entry.temperature) || null
-        ]).filter(entry => entry[1] !== null);
-        const humidityData = data.map(entry => [
-            moment.tz(entry.time, 'America/Denver').valueOf(),
-            parseFloat(entry.humidity) || null
-        ]).filter(entry => entry[1] !== null);
-        console.log(`Temperature Data for ${location}:`, temperatureData);
-        console.log(`Humidity Data for ${location}:`, humidityData);
-        createOrUpdateChart(
-            `${location}-temperature-chart`,
-            `${location.charAt(0).toUpperCase() + location.slice(1)} Temperature`,
-            temperatureData,
-            'Temperature (°F)'
-        );
-        createOrUpdateChart(
-            `${location}-humidity-chart`,
-            `${location.charAt(0).toUpperCase() + location.slice(1)} Humidity`,
-            humidityData,
-            'Humidity (%)'
-        );
+
+        titles.forEach(title => {
+       const columnKey = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
+       const seriesData = data.map(entry => [
+           moment.tz(entry.time, 'America/Denver').valueOf(),
+           parseFloat(entry[columnKey]) || null
+       ]).filter(entry => entry[1] !== null);
+
+       const containerId = ensureChartContainer(location, title);
+       createOrUpdateChart(
+           containerId,
+           `${location.charAt(0).toUpperCase() + location.slice(1)} ${title}`,
+           seriesData,
+           title
+       );
+      });
     }
+
     // Function to initialize buttons
     function initializeButtons() {
         const buttons = document.querySelectorAll('.time-range-button');
@@ -98,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
     // Load default data for all locations
     const locations = ['bedrooms', 'den', 'garage', 'birdbath', 'birdcam', 'garagetablet', 'frontdoortablet', 'backporch'];
     locations.forEach(location => {
@@ -112,8 +133,8 @@ document.addEventListener('DOMContentLoaded', function() {
 @foreach(['bedrooms', 'den', 'garage', 'birdbath', 'birdcam', 'garagetablet', 'frontdoortablet', 'backporch'] as $location)
     <div class="chart-wrapper">
         <div class="chart-title">{{ ucfirst($location) }} Environment</div>
-        <div class="chart-container" id="{{ $location }}-temperature-chart"></div>
-        <div class="chart-container" id="{{ $location }}-humidity-chart"></div>
+        <!-- Chart containers will be populated dynamically by JavaScript -->
+        <div class="chart-containers" id="{{ $location }}-charts"></div>
         <div class="time-range-buttons">
             <button class="time-range-button" data-location="{{ $location }}" data-hours="6" data-interval="1">6h</button>
             <button class="time-range-button" data-location="{{ $location }}" data-hours="12" data-interval="1">12h</button>
@@ -132,6 +153,11 @@ document.addEventListener('DOMContentLoaded', function() {
     .chart-title {
         font-size: 24px;
         margin-bottom: 20px;
+    }
+    .chart-containers {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
     }
     .chart-container {
         display: inline-block;

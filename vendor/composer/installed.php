@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'f8f5b6299f71db990da99d43a813e282bd0632b7',
+        'reference' => 'fe9fc9d7b923ffff83c91fc3f9fc4e86e33ad84b',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -460,7 +460,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'f8f5b6299f71db990da99d43a813e282bd0632b7',
+            'reference' => 'fe9fc9d7b923ffff83c91fc3f9fc4e86e33ad84b',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -582,6 +582,15 @@
             'install_path' => __DIR__ . '/../mockery/mockery',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'mohsenabrishami/stethoscope' => array(
+            'pretty_version' => '2.7.2',
+            'version' => '2.7.2.0',
+            'reference' => '079b272483c8d457bacf91544b92ffe0dc342043',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mohsenabrishami/stethoscope',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'monolog/monolog' => array(
             'pretty_version' => '3.8.1',

@@ -22,9 +22,9 @@ class ComposerStaticInit770174b5fc77eaac7ef145e8499cb95a
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '09f6b20656683369174dd6fa83b7e5fb' => __DIR__ . '/..' . '/symfony/polyfill-uuid/bootstrap.php',
         'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '47e1160838b5e5a10346ac4084b58c23' => __DIR__ . '/..' . '/laravel/prompts/src/helpers.php',
         'aadac1114cab8dc19489a7f6dc24c003' => __DIR__ . '/..' . '/pestphp/pest-plugin-arch/src/Autoload.php',
         'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
@@ -128,6 +128,8 @@ class ComposerStaticInit770174b5fc77eaac7ef145e8499cb95a
         array (
             'MyCLabs\\Enum\\' => 13,
             'Monolog\\' => 8,
+            'MohsenAbrishami\\Stethoscope\\Database\\Factories\\' => 47,
+            'MohsenAbrishami\\Stethoscope\\' => 28,
             'Mockery\\' => 8,
         ),
         'L' => 
@@ -208,9 +210,9 @@ class ComposerStaticInit770174b5fc77eaac7ef145e8499cb95a
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
         ),
         'Whoops\\' => 
         array (
@@ -433,6 +435,14 @@ class ComposerStaticInit770174b5fc77eaac7ef145e8499cb95a
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
+        'MohsenAbrishami\\Stethoscope\\Database\\Factories\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/database/factories',
+        ),
+        'MohsenAbrishami\\Stethoscope\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src',
+        ),
         'Mockery\\' => 
         array (
             0 => __DIR__ . '/..' . '/mockery/mockery/library/Mockery',
@@ -603,6 +613,9 @@ class ComposerStaticInit770174b5fc77eaac7ef145e8499cb95a
 
     public static $classMap = array (
         'App\\Charts\\TemperatureHumidityChart' => __DIR__ . '/../..' . '/app/Charts/TemperatureHumidityChart.php',
+        'App\\Console\\Commands\\MigrateAllLegacyData' => __DIR__ . '/../..' . '/app/Console/Commands/MigrateAllLegacyData.php',
+        'App\\Console\\Commands\\MigrateSensorData' => __DIR__ . '/../..' . '/app/Console/Commands/MigrateSensorData.php',
+        'App\\Console\\Commands\\MigrateUserData' => __DIR__ . '/../..' . '/app/Console/Commands/MigrateUserData.php',
         'App\\Console\\Commands\\MonitorTemperature' => __DIR__ . '/../..' . '/app/Console/Commands/MonitorTemperature.php',
         'App\\Console\\Commands\\MonthlySave' => __DIR__ . '/../..' . '/app/Console/Commands/MonthlySave.php',
         'App\\Console\\Commands\\UpdateCornPrice' => __DIR__ . '/../..' . '/app/Console/Commands/UpdateCornPrice.php',
@@ -645,6 +658,7 @@ class ComposerStaticInit770174b5fc77eaac7ef145e8499cb95a
         'App\\Models\\CornPrice' => __DIR__ . '/../..' . '/app/Models/CornPrice.php',
         'App\\Models\\Device' => __DIR__ . '/../..' . '/app/Models/Device.php',
         'App\\Models\\Event' => __DIR__ . '/../..' . '/app/Models/Event.php',
+        'App\\Models\\Sensor' => __DIR__ . '/../..' . '/app/Models/Sensor.php',
         'App\\Models\\SensorData' => __DIR__ . '/../..' . '/app/Models/SensorData.php',
         'App\\Models\\ShellyDevice' => __DIR__ . '/../..' . '/app/Models/ShellyDevice.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
@@ -814,6 +828,7 @@ class ComposerStaticInit770174b5fc77eaac7ef145e8499cb95a
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\DeviceSeeder' => __DIR__ . '/../..' . '/database/seeders/DeviceSeeder.php',
+        'Database\\Seeders\\UsersTableSeeder' => __DIR__ . '/../..' . '/database/seeders/UsersTableSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
         'DateInvalidOperationException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',
@@ -3663,6 +3678,33 @@ class ComposerStaticInit770174b5fc77eaac7ef145e8499cb95a
         'Mockery\\Undefined' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Undefined.php',
         'Mockery\\VerificationDirector' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/VerificationDirector.php',
         'Mockery\\VerificationExpectation' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/VerificationExpectation.php',
+        'MohsenAbrishami\\Stethoscope\\Commands\\CleanupCommand' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Commands/CleanupCommand.php',
+        'MohsenAbrishami\\Stethoscope\\Commands\\ListenCommand' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Commands/ListenCommand.php',
+        'MohsenAbrishami\\Stethoscope\\Commands\\MonitorCommand' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Commands/MonitorCommand.php',
+        'MohsenAbrishami\\Stethoscope\\Database\\Factories\\ResourceLogFactory' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/database/factories/ResourceLogFactory.php',
+        'MohsenAbrishami\\Stethoscope\\Events\\TroubleOccurred' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Events/TroubleOccurred.php',
+        'MohsenAbrishami\\Stethoscope\\Http\\Controllers\\Controller' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Http/Controllers/Controller.php',
+        'MohsenAbrishami\\Stethoscope\\Http\\Controllers\\MonitorController' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Http/Controllers/MonitorController.php',
+        'MohsenAbrishami\\Stethoscope\\Http\\Controllers\\MonitoringPanelController' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Http/Controllers/MonitoringPanelController.php',
+        'MohsenAbrishami\\Stethoscope\\Http\\Middleware\\CheckAccessToMonitoringPanel' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Http/Middleware/CheckAccessToMonitoringPanel.php',
+        'MohsenAbrishami\\Stethoscope\\Listeners\\SendResourceLogNotification' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Listeners/SendResourceLogNotification.php',
+        'MohsenAbrishami\\Stethoscope\\LogRecord\\Contracts\\LogRecordInterface' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/LogRecord/Contracts/LogRecordInterface.php',
+        'MohsenAbrishami\\Stethoscope\\LogRecord\\Drivers\\DatabaseDriver' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/LogRecord/Drivers/DatabaseDriver.php',
+        'MohsenAbrishami\\Stethoscope\\LogRecord\\Drivers\\FileDriver' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/LogRecord/Drivers/FileDriver.php',
+        'MohsenAbrishami\\Stethoscope\\LogRecord\\Facades\\Record' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/LogRecord/Facades/Record.php',
+        'MohsenAbrishami\\Stethoscope\\LogRecord\\LogManager' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/LogRecord/LogManager.php',
+        'MohsenAbrishami\\Stethoscope\\Models\\ResourceLog' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Models/ResourceLog.php',
+        'MohsenAbrishami\\Stethoscope\\Notifications\\LogReportNotification' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Notifications/LogReportNotification.php',
+        'MohsenAbrishami\\Stethoscope\\Notifications\\Notifiable' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Notifications/Notifiable.php',
+        'MohsenAbrishami\\Stethoscope\\Providers\\EventServiceProvider' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Providers/EventServiceProvider.php',
+        'MohsenAbrishami\\Stethoscope\\Services\\Cpu' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Services/Cpu.php',
+        'MohsenAbrishami\\Stethoscope\\Services\\Memory' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Services/Memory.php',
+        'MohsenAbrishami\\Stethoscope\\Services\\Network' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Services/Network.php',
+        'MohsenAbrishami\\Stethoscope\\Services\\ServiceInterface' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Services/ServiceInterface.php',
+        'MohsenAbrishami\\Stethoscope\\Services\\Storage' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Services/Storage.php',
+        'MohsenAbrishami\\Stethoscope\\Services\\WebServer' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Services/WebServer.php',
+        'MohsenAbrishami\\Stethoscope\\StethoscopeServiceProvider' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/StethoscopeServiceProvider.php',
+        'MohsenAbrishami\\Stethoscope\\Traits\\MessageCreatorTrait' => __DIR__ . '/..' . '/mohsenabrishami/stethoscope/src/Traits/MessageCreatorTrait.php',
         'Monolog\\Attribute\\AsMonologProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Attribute/AsMonologProcessor.php',
         'Monolog\\Attribute\\WithMonologChannel' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Attribute/WithMonologChannel.php',
         'Monolog\\DateTimeImmutable' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/DateTimeImmutable.php',
