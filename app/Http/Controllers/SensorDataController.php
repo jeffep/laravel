@@ -95,7 +95,11 @@ class SensorDataController extends Controller
             $filteredData = array_values($filteredData);
 
             // Log the transformed data
-            Log::debug("Transformed data for {$location}:", ['data' => $filteredData]);
+            //Log::debug("Transformed data for {$location}:", ['data' => $filteredData]);
+            Log::debug("Transformed data for {$location}:", [
+               'data_count' => count($filteredData),
+               'sample_data' => array_slice($filteredData, 0, 5)
+            ]);
 
             return response()->json([
                 'data' => $filteredData,
