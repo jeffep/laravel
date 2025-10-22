@@ -20,6 +20,7 @@ use App\Http\Controllers\TrugreenController;
 use App\Http\Controllers\WattageChartController;
 use App\Http\Controllers\WebcamController;
 use App\Http\Controllers\AutomationController;
+use App\Http\Controllers\SensorHistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [ControlPageController::class, 'home'])->name('home');
     Route::post('/generateGoAccessReport', [ControlPageController::class, 'generateGoAccessReport'])->name('generateGoAccessReport');
     Route::get('/temperatures', [ControlPageController::class, 'temperatures'])->name('temperatures');
+    Route::get('/sensor-history', [SensorHistoryController::class, 'showSensorHistory'])->name('sensor.history');
+    Route::get('/api/sensor-history', [SensorHistoryController::class, 'getSensorHistory']);
     Route::get('/sounds', [ControlPageController::class, 'sounds'])->name('sounds');
     Route::get('/sprinkler2', [ControlPageController::class, 'sprinkler2'])->name('sprinkler2');
 

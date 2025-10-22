@@ -120,6 +120,7 @@
     <li class="title title-color1">Sensors</li>
     <li><a href="{{ route('house') }}" class="button-color2">House Layout</a></li>
     <li><a href="{{ route('sensor-data') }}" class="button-color2">Temperature Graphs</a></li>
+    <li><a href="{{ route('sensor.history') }}" class="button-color2">Sensor History</a></li>
 
     <!-- Shelly Controllers Section -->
     <li class="title title-color1">Shelly Controllers</li>
