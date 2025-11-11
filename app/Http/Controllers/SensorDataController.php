@@ -13,101 +13,84 @@ class SensorDataController extends Controller
         return view('sensor-data');
     }
 
-    public function getSensorData(Request $request)
-    {
-        // Get query parameters
-        $location = $request->query('location');
-        $hours = $request->query('hours', 6);
-        $interval = $request->query('interval', 1);
+public function getSensorData(Request $request)
+{
+    $location = $request->query('location');
+    $hours    = $request->query('hours', 6);
+    $interval = max(1, (int) $request->query('interval', 1));
 
-        // Validate the location parameter
-        if (!$location) {
-            Log::error("Location parameter is required");
-            return response()->json(['error' => 'Location parameter is required'], 400);
-        }
-
-        // Calculate the start time
-        $startTime = Carbon::now()->subHours($hours)->toDateTimeString();
-
-        try {
-            // Get all unique titles for the location
-            $titles = DB::table('sensor_data')
-                ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.id')
-                ->where('sensors.location', $location)
-                ->where('sensor_data.time', '>=', $startTime)
-                ->distinct()
-                ->pluck('sensor_data.title')
-                ->toArray();
-
-            if (empty($titles)) {
-                Log::warning("No titles found for location: {$location}, startTime: {$startTime}");
-                return response()->json(['data' => [], 'titles' => []]);
-            }
-
-            // Fetch raw data
-            $rawData = DB::table('sensor_data')
-                ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.id')
-                ->select('sensors.location', 'sensor_data.time', 'sensor_data.title', 'sensor_data.value')
-                ->where('sensors.location', $location)
-                ->where('sensor_data.time', '>=', $startTime)
-                ->orderBy('sensor_data.time', 'asc')
-                ->get();
-
-            // Log the raw query for debugging
-            $rawQuery = DB::table('sensor_data')
-                ->join('sensors', 'sensor_data.sensor_id', '=', 'sensors.id')
-                ->select('sensors.location', 'sensor_data.time', 'sensor_data.title', 'sensor_data.value')
-                ->where('sensors.location', $location)
-                ->where('sensor_data.time', '>=', $startTime)
-                ->orderBy('sensor_data.time', 'asc')
-                ->toSql();
-            Log::debug("Sensor data query for {$location}: {$rawQuery}", ['bindings' => [$location, $startTime]]);
-
-            // Transform data into pivoted format
-            $data = [];
-            $currentTime = null;
-            $currentEntry = null;
-
-            foreach ($rawData as $row) {
-                if ($row->time !== $currentTime) {
-                    if ($currentEntry) {
-                        $data[] = $currentEntry;
-                    }
-                    $currentEntry = [
-                        'location' => $row->location,
-                        'time' => $row->time
-                    ];
-                    $currentTime = $row->time;
-                }
-                $columnKey = strtolower(preg_replace('/[^a-zA-Z0-9]/', '_', $row->title));
-                $currentEntry[$columnKey] = (float) $row->value;
-            }
-            if ($currentEntry) {
-                $data[] = $currentEntry;
-            }
-
-            // Apply interval filtering
-            $filteredData = array_filter($data, function ($entry, $index) use ($interval) {
-                return $index % $interval === 0;
-            }, ARRAY_FILTER_USE_BOTH);
-
-            // Convert to indexed array
-            $filteredData = array_values($filteredData);
-
-            // Log the transformed data
-            //Log::debug("Transformed data for {$location}:", ['data' => $filteredData]);
-            Log::debug("Transformed data for {$location}:", [
-               'data_count' => count($filteredData),
-               'sample_data' => array_slice($filteredData, 0, 5)
-            ]);
-
-            return response()->json([
-                'data' => $filteredData,
-                'titles' => $titles
-            ]);
-        } catch (\Exception $e) {
-            Log::error("Error fetching sensor data for {$location}: {$e->getMessage()}", ['exception' => $e]);
-            return response()->json(['error' => 'Internal server error'], 500);
-        }
+    if (!$location) {
+        Log::error("Location parameter is required");
+        return response()->json(['error' => 'Location required'], 400);
     }
+
+    $start = Carbon::now('America/Denver')->subHours($hours);
+
+    try {
+        // -------------------------------------------------
+        // 1. All titles that exist in the requested window
+        // -------------------------------------------------
+        $titles = DB::table('sensor_data AS sd')
+            ->join('sensors AS s', 'sd.sensor_id', '=', 's.id')
+            ->where('s.location', $location)
+            ->where('sd.time', '>=', $start)
+            ->distinct()
+            ->pluck('sd.title')
+            ->toArray();
+
+        if (empty($titles)) {
+            return response()->json(['data' => [], 'titles' => []]);
+        }
+
+        // -------------------------------------------------
+        // 2. Raw rows (time, title, value)
+        // -------------------------------------------------
+        $rows = DB::table('sensor_data AS sd')
+            ->join('sensors AS s', 'sd.sensor_id', '=', 's.id')
+            ->select('sd.time', 'sd.title', 'sd.value')
+            ->where('s.location', $location)
+            ->where('sd.time', '>=', $start)
+            ->orderBy('sd.time')
+            ->get();
+
+        // -------------------------------------------------
+        // 3. Pivot → one object per timestamp
+        // -------------------------------------------------
+        $pivoted = [];
+        foreach ($rows as $r) {
+            $key = strtolower(preg_replace('/[^A-Za-z0-9]/', '_', $r->title));
+
+            // Keep the **exact numeric value** – 0 stays 0, null stays null
+            $val = $r->value === null ? null : (float) $r->value;
+
+            if (!isset($pivoted[$r->time])) {
+                $pivoted[$r->time] = ['time' => $r->time];
+            }
+            $pivoted[$r->time][$key] = $val;
+        }
+        $data = array_values($pivoted);   // re-index
+
+        // -------------------------------------------------
+        // 4. Down-sample by interval (keep first point of each bucket)
+        // -------------------------------------------------
+        if ($interval > 1) {
+            $data = collect($data)->filter(function ($_, $i) use ($interval) {
+                return $i % $interval === 0;
+            })->values()->all();
+        }
+
+        Log::debug("API {$location} → " . count($data) . ' points', [
+            'sample' => array_slice($data, 0, 3)
+        ]);
+
+        return response()->json([
+            'data'   => $data,
+            'titles' => $titles
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error("SensorData API error: {$e->getMessage()}", ['exception' => $e]);
+        return response()->json(['error' => 'Server error'], 500);
+    }
+}
 }

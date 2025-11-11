@@ -38,46 +38,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to create or update a Highcharts chart
-    function createOrUpdateChart(container, title, seriesData, seriesName) {
-        console.log(`Creating/Updating chart for container: ${container}`);
-        console.log(`Series Data for ${seriesName}:`, seriesData);
-        if (!seriesData || seriesData.length === 0) {
-            console.warn(`No data to plot for ${containerId}`);
+    function createOrUpdateChart(containerId, title, seriesData, seriesName) {
+    console.log(`Updating chart: ${containerId}`, seriesData);
+
+    if (!seriesData || seriesData.length === 0) {
+        const container = document.getElementById(containerId);
+        if (container) {
             container.innerHTML = `<p style="text-align: center; color: #666;">No data available for ${seriesName}</p>`;
-            return;
         }
-
-        // Define unit based on title
-        const units = {
-            'Temperature': '°F',
-            'Humidity': '%',
-            'FanSpeed': 'RPM'
-        };
-        const unit = units[title] || '';
-
-        const chartConfig = {
-            time: {
-                timezone: 'America/Denver'
-            },
-            title: { text: title },
-            xAxis: {
-                type: 'datetime',
-                title: { text: 'Time' }
-            },
-            yAxis: {
-                title: { text: `${seriesName} (${unit})` }
-            },
-            series: [{ name: seriesName, data: seriesData }]
-        };
-
-        const chart = Highcharts.charts[container] || Highcharts.chart(container, chartConfig);
-        if (chart.series && chart.series.length > 0) {
-            chart.series[0].setData(seriesData);
-            chart.setTitle({ text: title });
-        }
+        const oldChart = Highcharts.charts.find(c => c && c.renderTo.id === containerId);
+        if (oldChart) oldChart.destroy();
+        return;
     }
 
-    // Function to update charts for a location
+    // Extract sensor type from the end of the title (e.g., "Temperature")
+    const sensorType = title.trim().split(' ').pop();
+    const units = { 'Temperature': '°F', 'Humidity': '%', 'FanSpeed': 'RPM' };
+    const unit = units[sensorType] || '';
+
+    const chartConfig = {
+        chart: { renderTo: containerId },
+        time: { timezone: 'America/Denver' },
+        title: { text: title },
+        xAxis: { type: 'datetime', title: { text: 'Time' } },
+        yAxis: { title: { text: `${seriesName} (${unit})` } },
+        series: [{ name: seriesName, data: seriesData }]
+    };
+
+    let chart = Highcharts.charts.find(c => c && c.renderTo.id === containerId);
+    if (chart) {
+        chart.update(chartConfig, true);
+    } else {
+        Highcharts.chart(chartConfig);
+    }
+}
+
+// Function to update charts for a location
     async function updateCharts(location, hours, interval) {
         console.log('updateCharts called with:', { location, hours, interval });
         const result = await fetchData(location, hours, interval);
@@ -89,22 +85,29 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        titles.forEach(title => {
-       const columnKey = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
-       const seriesData = data.map(entry => [
-           moment.tz(entry.time, 'America/Denver').valueOf(),
-           parseFloat(entry[columnKey]) || null
-       ]).filter(entry => entry[1] !== null);
+titles.forEach(title => {
+    const columnKey = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
-       const containerId = ensureChartContainer(location, title);
-       createOrUpdateChart(
-           containerId,
-           `${location.charAt(0).toUpperCase() + location.slice(1)} ${title}`,
-           seriesData,
-           title
-       );
-      });
-    }
+    const seriesData = data
+        .map(entry => {
+            const raw = entry[columnKey];
+            if (raw === undefined || raw === null) return null;
+            const val = parseFloat(raw);
+            return isNaN(val) ? null : [
+                moment.tz(entry.time, 'America/Denver').valueOf(),
+                val
+            ];
+        })
+        .filter(point => point !== null);
+
+    // Build full title HERE (location is in scope)
+    const fullTitle = `${location.charAt(0).toUpperCase() + location.slice(1)} ${title}`;
+    const containerId = ensureChartContainer(location, title);
+
+    // Pass fullTitle — NO location inside createOrUpdateChart
+    createOrUpdateChart(containerId, fullTitle, seriesData, title);
+});
+}
 
     // Function to initialize buttons
     function initializeButtons() {
