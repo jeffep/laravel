@@ -2,7 +2,8 @@
 @extends('dashboard')
 
 @push('head-scripts')
-    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="/js/highcharts.js"></script>
+<!--    <script src="https://code.highcharts.com/highcharts.js"></script> -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment-timezone@0.5.33/builds/moment-timezone-with-data.min.js"></script>
