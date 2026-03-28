@@ -124,7 +124,7 @@ titles.forEach(title => {
     }
 
     // Load default data for all locations
-    const locations = ['bedrooms', 'den', 'garage', 'birdbath', 'birdcam', 'backporch', 'front'];
+    const locations = ['bedrooms', 'den', 'garage', 'birdbath', 'birdcam', 'backporch', 'front', 'gardenmon'];
     locations.forEach(location => {
         updateCharts(location, 6, 1);
     });
@@ -134,7 +134,7 @@ titles.forEach(title => {
 @endsection
 @section('control-content')
 <!-- Chart Wrappers -->
-@foreach(['bedrooms', 'den', 'garage', 'birdbath', 'birdcam', 'backporch', 'front'] as $location)
+@foreach(['bedrooms', 'den', 'garage', 'birdbath', 'birdcam', 'backporch', 'front', 'gardenmon'] as $location)
     <div class="chart-wrapper">
         <div class="chart-title">{{ ucfirst($location) }} Environment</div>
         <!-- Chart containers will be populated dynamically by JavaScript -->
