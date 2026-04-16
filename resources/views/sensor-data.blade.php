@@ -9,6 +9,14 @@
 @section('body-inline-scripts')
     <script>
 document.addEventListener('DOMContentLoaded', function() {
+
+    // === IDEAL MOISTURE ZONES (edit these after final solenoid calibration) ===
+    const IDEAL_MOISTURE_PCT_MIN = 40;
+    const IDEAL_MOISTURE_PCT_MAX = 80;
+    const IDEAL_PF_MIN = 35;   // temporary — change to your real 40% pF value later
+    const IDEAL_PF_MAX = 45;   // temporary — change to your real 80% pF value later
+    // ======================================================================
+
     // Function to fetch data from the server
     async function fetchData(location, hours, interval) {
         try {
@@ -37,43 +45,77 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return containerId;
     }
-
-    // Function to create or update a Highcharts chart
+       // Function to create or update a Highcharts chart
     function createOrUpdateChart(containerId, title, seriesData, seriesName) {
-    console.log(`Updating chart: ${containerId}`, seriesData);
+        console.log(`Updating chart: ${containerId}`, seriesData);
 
-    if (!seriesData || seriesData.length === 0) {
-        const container = document.getElementById(containerId);
-        if (container) {
-            container.innerHTML = `<p style="text-align: center; color: #666;">No data available for ${seriesName}</p>`;
+        if (!seriesData || seriesData.length === 0) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `<p style="text-align: center; color: #666;">No data available for ${seriesName}</p>`;
+            }
+            const oldChart = Highcharts.charts.find(c => c && c.renderTo.id === containerId);
+            if (oldChart) oldChart.destroy();
+            return;
         }
-        const oldChart = Highcharts.charts.find(c => c && c.renderTo.id === containerId);
-        if (oldChart) oldChart.destroy();
-        return;
+
+        // Extract sensor type from the end of the title
+        const sensorType = title.trim().split(' ').pop();
+        const units = { 'Temperature': '°F', 'Humidity': '%', 'FanSpeed': 'RPM' };
+        const unit = units[sensorType] || '';
+
+                // === ADD BLUE IDEAL MOISTURE BAND FOR GARDENMON SOIL CHARTS ===
+        let plotBands = [];
+        const lowerTitle = title.toLowerCase();
+
+        if (lowerTitle.includes('gardenmon') && lowerTitle.includes('soil')) {
+            if (lowerTitle.includes('moisture_pct') || lowerTitle.includes('moisture')) {
+                plotBands.push({
+                    from: IDEAL_MOISTURE_PCT_MIN,
+                    to: IDEAL_MOISTURE_PCT_MAX,
+                    color: 'rgba(33, 150, 243, 0.15)',
+                    label: {
+                        text: `Ideal (${IDEAL_MOISTURE_PCT_MIN}-${IDEAL_MOISTURE_PCT_MAX}%)`,
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        style: { color: '#2196F3', fontSize: '12px' }
+                    }
+                });
+            } 
+            else if (lowerTitle.includes('pf') || lowerTitle.includes('p_f') || lowerTitle.includes('capacitance')) {
+                plotBands.push({
+                    from: IDEAL_PF_MIN,
+                    to: IDEAL_PF_MAX,
+                    color: 'rgba(33, 150, 243, 0.15)',
+                    label: {
+                        text: `Ideal (${IDEAL_PF_MIN}-${IDEAL_PF_MAX} pF)`,
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        style: { color: '#2196F3', fontSize: '12px' }
+                    }
+                });
+            }
+        }
+        // ===============================================================
+        const chartConfig = {
+            chart: { renderTo: containerId },
+            time: { timezone: 'America/Denver' },
+            title: { text: title },
+            xAxis: { type: 'datetime', title: { text: 'Time' } },
+            yAxis: {
+                title: { text: `${seriesName} (${unit})` },
+                plotBands: plotBands   // ← this is the new magic
+            },
+            series: [{ name: seriesName, data: seriesData }]
+        };
+
+        let chart = Highcharts.charts.find(c => c && c.renderTo.id === containerId);
+        if (chart) {
+            chart.update(chartConfig, true);
+        } else {
+            Highcharts.chart(chartConfig);
+        }
     }
-
-    // Extract sensor type from the end of the title (e.g., "Temperature")
-    const sensorType = title.trim().split(' ').pop();
-    const units = { 'Temperature': '°F', 'Humidity': '%', 'FanSpeed': 'RPM' };
-    const unit = units[sensorType] || '';
-
-    const chartConfig = {
-        chart: { renderTo: containerId },
-        time: { timezone: 'America/Denver' },
-        title: { text: title },
-        xAxis: { type: 'datetime', title: { text: 'Time' } },
-        yAxis: { title: { text: `${seriesName} (${unit})` } },
-        series: [{ name: seriesName, data: seriesData }]
-    };
-
-    let chart = Highcharts.charts.find(c => c && c.renderTo.id === containerId);
-    if (chart) {
-        chart.update(chartConfig, true);
-    } else {
-        Highcharts.chart(chartConfig);
-    }
-}
-
 // Function to update charts for a location
     async function updateCharts(location, hours, interval) {
         console.log('updateCharts called with:', { location, hours, interval });
