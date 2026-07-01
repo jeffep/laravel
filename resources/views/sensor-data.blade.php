@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // === IDEAL MOISTURE ZONES (edit these after final solenoid calibration) ===
     const IDEAL_MOISTURE_PCT_MIN = 40;
     const IDEAL_MOISTURE_PCT_MAX = 80;
-    const IDEAL_PF_MIN = 35;   // temporary — change to your real 40% pF value later
-    const IDEAL_PF_MAX = 45;   // temporary — change to your real 80% pF value later
+    const IDEAL_PF_MIN = 29;   // temporary — change to your real 40% pF value later
+    const IDEAL_PF_MAX = 36;   // temporary — change to your real 80% pF value later
     // ======================================================================
 
     // Function to fetch data from the server
